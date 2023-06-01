@@ -14,21 +14,20 @@ class DataService{
 
   void carregar(index){
     final funcoes = [carregarCafes, carregarCervejas, carregarNacoes];
+    final tiposItem = [ItemType.coffee, ItemType.beer, ItemType.nation];
+    //ignorar solicitação se uma requisição já estiver em curso
+    if (tableStateNotifier.value['status'] == TableStatus.loading) return;
+    if (tableStateNotifier.value['itemType'] != tiposItem[index]) {
+      tableStateNotifier.value = {
+        'status': TableStatus.loading,
+        'dataObjects': [],
+        'itemType': tiposItem[index]
+      };
+    }
     funcoes[index]();
   }
 
   void carregarCafes(){
-    //ignorar solicitação se uma requisição já estiver em curso
-    if (tableStateNotifier.value['status'] == TableStatus.loading) return;
-
-    if (tableStateNotifier.value['itemType'] != ItemType.coffee){
-      tableStateNotifier.value = {
-        'status': TableStatus.loading,
-        'dataObjects': [],
-        'itemType': ItemType.coffee
-      };
-    }
-
     var coffeesUri = Uri(
       scheme: 'https',
       host: 'random-data-api.com',
@@ -50,17 +49,6 @@ class DataService{
   }
 
   void carregarNacoes(){
-    //ignorar solicitação se uma requisição já estiver em curso
-    if (tableStateNotifier.value['status'] == TableStatus.loading) return;
-
-    if (tableStateNotifier.value['itemType'] != ItemType.nation){
-      tableStateNotifier.value = {
-        'status': TableStatus.loading,
-        'dataObjects': [],
-        'itemType': ItemType.nation
-      };
-    }
-
     var nationsUri = Uri(
       scheme: 'https',
       host: 'random-data-api.com',
@@ -83,18 +71,6 @@ class DataService{
   }
 
   void carregarCervejas(){
-    //ignorar solicitação se uma requisição já estiver em curso
-    if (tableStateNotifier.value['status'] == TableStatus.loading) return;
-
-    //emitir estado loading se items em exibição não forem cervejas
-    if (tableStateNotifier.value['itemType'] != ItemType.beer){
-      tableStateNotifier.value = {
-        'status': TableStatus.loading,
-        'dataObjects': [],
-        'itemType': ItemType.beer
-      };
-    } 
-
     var beersUri = Uri(
       scheme: 'https',
       host: 'random-data-api.com',
